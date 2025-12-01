@@ -114,7 +114,7 @@ Lưu ý: `main.py` khởi động một thread Flask (port `3000`) rồi chạy 
 Lệnh prefix cũ:
 - `!refresh` — tương đương `/refreshverify` (Admin)
 
-## Cách hoạt động ngắn gọn
+## Cách hoạt động 
 1. Admin set kênh & role bằng lệnh bot.
 2. Bot gửi embed xác minh (kèm nút `Xác Minh`) vào kênh đó.
 3. User nhấn nút → bot sinh đường link verify và lưu thông tin tạm (avatar, tên,...).
