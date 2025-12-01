@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác Minh Discord</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            border: 4px solid #5865F2;
+            box-shadow: 0 5px 20px rgba(88, 101, 242, 0.3);
+            object-fit: cover;
+        }
+        
+        .user-name {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .user-tag {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .logo svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .user-info-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 2px solid #dee2e6;
+        }
+        
+        .captcha-container {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        
+        .verify-btn {
+            background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            font-weight: 600;
+        }
+        
+        .verify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(88, 101, 242, 0.4);
+        }
+        
+        .verify-btn:active {
+            transform: translateY(0);
+        }
+        
+        .error {
+            background: #fee;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success-container {
+            text-align: center;
+        }
+        
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .success-icon svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+        
+        .success-message {
+            color: #27ae60;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .success-text {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        
+        .instructions {
+            background: #e8f4fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            color: #2980b9;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .instructions ol {
+            color: #34495e;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .default-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid #5865F2;
+            box-shadow: 0 5px 20px rgba(88, 101, 242, 0.3);
+        }
+        
+        .default-avatar svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if success %}
+        <div class="success-container">
+            {% if user_info and user_info.avatar %}
+            <img src="{{ user_info.avatar }}" alt="Avatar" class="user-avatar">
+            {% else %}
+            <div class="default-avatar">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </div>
+            {% endif %}
+            
+            {% if user_info %}
+            <div class="user-name">{{ user_info.name }}</div>
+            <div class="user-tag">{{ user_info.username }}</div>
+            {% endif %}
+            
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+            </div>
+            <h1 class="success-message">Xác Minh Thành Công!</h1>
+            <p class="success-text">
+                {% if already_verified %}
+                Bạn đã được xác minh trước đó.
+                {% else %}
+                Bạn đã xác minh thành công. Bây giờ có thể đóng trang này và quay lại Discord.
+                {% endif %}
+            </p>
+            <p class="success-text">Role sẽ được cấp tự động.</p>
+        </div>
+        {% else %}
+        
+        {% if user_info and user_info.avatar %}
+        <img src="{{ user_info.avatar }}" alt="Avatar" class="user-avatar">
+        {% elif user_info %}
+        <div class="default-avatar">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+        </div>
+        {% else %}
+        <div class="logo">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+            </svg>
+        </div>
+        {% endif %}
+        
+        {% if user_info %}
+        <div class="user-name">{{ user_info.name }}</div>
+        <div class="user-tag">{{ user_info.username }}</div>
+        {% endif %}
+        
+        <h1>Xác Minh Discord</h1>
+        <p class="subtitle">Hoàn thành xác minh để truy cập server</p>
+        
+        <div class="instructions">
+            <h3>Hướng dẫn:</h3>
+            <ol>
+                <li>Hoàn thành captcha bên dưới</li>
+                <li>Nhấn nút "Xác Minh"</li>
+                <li>Quay lại Discord - role sẽ được cấp tự động</li>
+            </ol>
+        </div>
+        
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <form method="POST" action="{{ url_for('process_verification', verify_key=user_id) if user_id else url_for('verify_page') }}">
+            <div class="captcha-container">
+                {% if site_key %}
+                <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
+                {% else %}
+                <p style="color: #e74c3c;">reCAPTCHA chưa được cấu hình. Vui lòng thiết lập RECAPTCHA_SITE_KEY.</p>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="verify-btn">Xác Minh</button>
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>
